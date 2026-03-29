@@ -18,14 +18,12 @@ starfire list
 starfire register cloudflare <your-api-token>
 starfire register railway <your-token>
 starfire register neonctl <your-api-key>
-starfire register clerk <your-secret-key>
 starfire register better-auth <your-secret>
 
 # Run tools — credentials are injected automatically
 starfire run wrangler deploy
 starfire run railway up
 starfire run neonctl projects list
-starfire run clerk users list
 starfire run better-auth migrate
 ```
 
@@ -54,7 +52,6 @@ starfire run better-auth migrate
 | netlify | PAT | `NETLIFY_AUTH_TOKEN` |
 | fal | API Key | `FAL_KEY` |
 | better-auth | API Key | `BETTER_AUTH_SECRET` |
-| clerk | API Key | `CLERK_SECRET_KEY` |
 
 ## How It Works
 

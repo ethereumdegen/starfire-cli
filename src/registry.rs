@@ -154,15 +154,5 @@ pub fn default_registry() -> HashMap<&'static str, ToolDef> {
         auth_label: "BetterAuth Secret Key",
     });
 
-    m.insert("clerk", ToolDef {
-        name: "clerk",
-        description: "Clerk authentication CLI",
-        install_cmd: "npm install -g @clerk/cli",
-        binary_name: "clerk",
-        env_var: "CLERK_SECRET_KEY",
-        auth_type: AuthType::ApiKey,
-        auth_label: "Clerk Secret Key",
-    });
-
     m
 }
