@@ -16,13 +16,11 @@ starfire list
 
 # Register your API key / token
 starfire register cloudflare <your-api-token>
-starfire register railway <your-token>
 starfire register neonctl <your-api-key>
 starfire register better-auth <your-secret>
 
 # Run tools — credentials are injected automatically
 starfire run wrangler deploy
-starfire run railway up
 starfire run neonctl projects list
 starfire run better-auth migrate
 ```
@@ -44,7 +42,6 @@ starfire run better-auth migrate
 | wrangler | API Token | `CLOUDFLARE_API_TOKEN` |
 | cf-dns | API Token | `CF_API_TOKEN` |
 | cloudflared | API Token | `TUNNEL_TOKEN` |
-| railway | PAT | `RAILWAY_TOKEN` |
 | neonctl | API Key | `NEON_API_KEY` |
 | vercel | PAT | `VERCEL_TOKEN` |
 | flyctl | API Token | `FLY_API_TOKEN` |

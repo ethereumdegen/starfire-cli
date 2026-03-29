@@ -74,16 +74,6 @@ pub fn default_registry() -> HashMap<&'static str, ToolDef> {
         auth_label: "Cloudflare Tunnel Token",
     });
 
-    m.insert("railway", ToolDef {
-        name: "railway",
-        description: "Railway deployment CLI",
-        install_cmd: "npm install -g @railway/cli",
-        binary_name: "railway",
-        env_var: "RAILWAY_TOKEN",
-        auth_type: AuthType::Pat,
-        auth_label: "Railway Project Token",
-    });
-
     m.insert("fal", ToolDef {
         name: "fal",
         description: "fal.ai CLI for serverless AI",
