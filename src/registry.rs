@@ -56,9 +56,9 @@ pub fn default_registry() -> HashMap<&'static str, ToolDef> {
 
     m.insert("cf-dns", ToolDef {
         name: "cf-dns",
-        description: "Cloudflare DNS (built-in)",
-        install_cmd: "Built-in — no install needed (uses curl)",
-        binary_name: "curl",
+        description: "Cloudflare DNS management",
+        install_cmd: "Built-in — no install needed",
+        binary_name: "starfire",
         env_var: "CF_API_TOKEN",
         auth_type: AuthType::ApiToken,
         auth_label: "Cloudflare API Token",

@@ -23,6 +23,7 @@ starfire register better-auth <your-secret>
 starfire run wrangler deploy
 starfire run neonctl projects list
 starfire run better-auth migrate
+starfire run cf-dns list example.com
 ```
 
 ## Commands

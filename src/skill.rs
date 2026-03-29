@@ -196,7 +196,7 @@ starfire run wrangler tail
 
 - Token is scoped via Cloudflare dashboard → API Tokens
 - Env var `{env_var}` is injected automatically by starfire
-- For DNS management, use `starfire cf-dns` (built-in, no extra install needed)
+- For DNS management, use `starfire run cf-dns` (built-in, no extra install needed)
 - For tunnels, use `cloudflared` instead (`starfire skill cloudflared`)
 "#,
             auth_type = tool.auth_type,
@@ -211,9 +211,9 @@ auth_type: {auth_type}
 env_var: {env_var}
 ---
 
-# cf-dns — Cloudflare DNS Management (Built-in)
+# cf-dns — Cloudflare DNS Management
 
-Built-in to starfire — no external CLI needed. Uses the Cloudflare API via curl.
+Built-in to starfire — no external CLI needed. Uses starfire's internal Cloudflare SDK.
 
 ## Setup
 
@@ -222,37 +222,35 @@ Built-in to starfire — no external CLI needed. Uses the Cloudflare API via cur
 starfire register cf-dns <CF_API_TOKEN>
 ```
 
-No other installation required — just `curl` on your PATH.
-
 ## Common Operations
 
 ```bash
 # List all zones on your account
-starfire cf-dns zones
+starfire run cf-dns zones
 
 # List DNS records for a zone
-starfire cf-dns list --zone example.com
+starfire run cf-dns list --zone example.com
 
 # Filter by record type
-starfire cf-dns list --zone example.com --type A
+starfire run cf-dns list --zone example.com --type A
 
 # Create an A record
-starfire cf-dns create --zone example.com --type A --name app --content 1.2.3.4
+starfire run cf-dns create --zone example.com --type A --name app --content 1.2.3.4
 
 # Create a CNAME record
-starfire cf-dns create --zone example.com --type CNAME --name www --content example.com
+starfire run cf-dns create --zone example.com --type CNAME --name www --content example.com
 
 # Create a proxied record (orange cloud)
-starfire cf-dns create --zone example.com --type A --name app --content 1.2.3.4 --proxied true
+starfire run cf-dns create --zone example.com --type A --name app --content 1.2.3.4 --proxied true
 
 # Create a TXT record
-starfire cf-dns create --zone example.com --type TXT --name _verify --content "v=verify123"
+starfire run cf-dns create --zone example.com --type TXT --name _verify --content "v=verify123"
 
-# Update a record (get the record ID from 'starfire cf-dns list')
-starfire cf-dns update --zone example.com --id <record_id> --content 5.6.7.8
+# Update a record (get the record ID from 'starfire run cf-dns list')
+starfire run cf-dns update --zone example.com --id <record_id> --content 5.6.7.8
 
 # Delete a record
-starfire cf-dns delete --zone example.com --id <record_id>
+starfire run cf-dns delete --zone example.com --id <record_id>
 ```
 
 ## Auth Notes
@@ -319,7 +317,7 @@ starfire run cloudflared access tcp --hostname app.example.com --url localhost:5
 - `{env_var}` is used for running pre-configured tunnels (from dashboard)
 - For initial setup, `cloudflared tunnel login` uses browser-based OAuth
 - Tunnel credentials are stored in `~/.cloudflared/` after login
-- For DNS records, use `starfire cf-dns` (built-in, no extra install needed)
+- For DNS records, use `starfire run cf-dns` (built-in, no extra install needed)
 "#,
             auth_type = tool.auth_type,
             env_var = tool.env_var,

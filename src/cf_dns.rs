@@ -6,6 +6,74 @@ use crate::errors::StarfireError;
 const CF_API_BASE: &str = "https://api.cloudflare.com/client/v4";
 const CRED_KEY: &str = "cf-dns";
 
+/// Parse named flag value from args (e.g. --zone example.com).
+fn take_flag(args: &[String], flag: &str) -> Option<String> {
+    args.windows(2).find_map(|w| {
+        if w[0] == flag { Some(w[1].clone()) } else { None }
+    })
+}
+
+/// Parse named flag as u32.
+fn take_flag_u32(args: &[String], flag: &str) -> Option<u32> {
+    take_flag(args, flag).and_then(|v| v.parse().ok())
+}
+
+/// Parse named flag as bool.
+fn take_flag_bool(args: &[String], flag: &str) -> Option<bool> {
+    take_flag(args, flag).and_then(|v| v.parse().ok())
+}
+
+fn usage() -> StarfireError {
+    let msg = "\
+Usage: starfire run cf-dns <subcommand> [options]
+
+Subcommands:
+  zones                                     List all zones
+  list   --zone <domain> [--type <type>]    List DNS records
+  create --zone <domain> --type <type> --name <name> --content <value> [--ttl N] [--proxied true|false]
+  update --zone <domain> --id <record_id> [--type <type>] [--name <name>] [--content <value>] [--ttl N] [--proxied true|false]
+  delete --zone <domain> --id <record_id>";
+    StarfireError::IoError(std::io::Error::new(std::io::ErrorKind::InvalidInput, msg))
+}
+
+/// Entry point when invoked via `starfire run cf-dns [args...]`.
+pub fn run(args: &[String]) -> Result<(), StarfireError> {
+    let sub = args.first().map(|s| s.as_str()).unwrap_or("");
+    match sub {
+        "zones" => zones(),
+        "list" => {
+            let zone = take_flag(args, "--zone").ok_or_else(usage)?;
+            let record_type = take_flag(args, "--type");
+            list(&zone, record_type.as_deref())
+        }
+        "create" => {
+            let zone = take_flag(args, "--zone").ok_or_else(usage)?;
+            let record_type = take_flag(args, "--type").ok_or_else(usage)?;
+            let name = take_flag(args, "--name").ok_or_else(usage)?;
+            let content = take_flag(args, "--content").ok_or_else(usage)?;
+            let ttl = take_flag_u32(args, "--ttl");
+            let proxied = take_flag_bool(args, "--proxied");
+            create(&zone, &record_type, &name, &content, ttl, proxied)
+        }
+        "update" => {
+            let zone = take_flag(args, "--zone").ok_or_else(usage)?;
+            let id = take_flag(args, "--id").ok_or_else(usage)?;
+            let record_type = take_flag(args, "--type");
+            let name = take_flag(args, "--name");
+            let content = take_flag(args, "--content");
+            let ttl = take_flag_u32(args, "--ttl");
+            let proxied = take_flag_bool(args, "--proxied");
+            update(&zone, &id, record_type.as_deref(), name.as_deref(), content.as_deref(), ttl, proxied)
+        }
+        "delete" => {
+            let zone = take_flag(args, "--zone").ok_or_else(usage)?;
+            let id = take_flag(args, "--id").ok_or_else(usage)?;
+            delete(&zone, &id)
+        }
+        _ => Err(usage()),
+    }
+}
+
 fn get_token() -> Result<String, StarfireError> {
     let creds = load_credentials()?;
     creds

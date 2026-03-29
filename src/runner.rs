@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::process::Command;
 
+use crate::cf_dns;
 use crate::config::load_credentials;
 use crate::errors::StarfireError;
 use crate::registry::ToolDef;
@@ -21,6 +22,11 @@ pub fn run_tool(
     let tool = registry
         .get(name)
         .ok_or_else(|| StarfireError::UnknownTool(name.to_string()))?;
+
+    // Built-in tools: dispatch directly instead of spawning a binary
+    if name == "cf-dns" {
+        return cf_dns::run(args);
+    }
 
     // Check if the CLI binary is installed
     if !binary_exists(tool.binary_name) {

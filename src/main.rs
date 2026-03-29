@@ -8,7 +8,7 @@ mod runner;
 mod skill;
 
 use clap::Parser;
-use cli::{AuthAction, CfDnsAction, Cli, Commands};
+use cli::{AuthAction, Cli, Commands};
 
 fn run() -> Result<(), errors::StarfireError> {
     let cli = Cli::parse();
@@ -52,21 +52,6 @@ fn run() -> Result<(), errors::StarfireError> {
         Commands::Run { tool, args } => {
             runner::run_tool(&tool, &args, &registry)?;
         }
-        Commands::CfDns { action } => match action {
-            CfDnsAction::Zones => cf_dns::zones()?,
-            CfDnsAction::List { zone, record_type } => {
-                cf_dns::list(&zone, record_type.as_deref())?;
-            }
-            CfDnsAction::Create { zone, record_type, name, content, ttl, proxied } => {
-                cf_dns::create(&zone, &record_type, &name, &content, ttl, proxied)?;
-            }
-            CfDnsAction::Update { zone, id, record_type, name, content, ttl, proxied } => {
-                cf_dns::update(&zone, &id, record_type.as_deref(), name.as_deref(), content.as_deref(), ttl, proxied)?;
-            }
-            CfDnsAction::Delete { zone, id } => {
-                cf_dns::delete(&zone, &id)?;
-            }
-        },
     }
 
     Ok(())
