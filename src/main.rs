@@ -19,7 +19,7 @@ fn run() -> Result<(), errors::StarfireError> {
         }
         Commands::Auth { action } => match action {
             AuthAction::Set { tool, key } => auth::set(&tool, &key)?,
-            AuthAction::Get { tool } => auth::get(&tool)?,
+            AuthAction::Get { tool, unmask } => auth::get(&tool, unmask)?,
             AuthAction::List => auth::list()?,
             AuthAction::Remove { tool } => auth::remove(&tool)?,
         },
@@ -39,6 +39,7 @@ fn run() -> Result<(), errors::StarfireError> {
                 "fly" | "fly.io" => "flyctl",
                 "fal.ai" | "fal-ai" => "fal",
                 "neon" | "neondb" => "neonctl",
+                "betterauth" | "better_auth" => "better-auth",
                 other => other,
             };
             auth::set(resolved, &token)?;

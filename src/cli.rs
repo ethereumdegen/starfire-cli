@@ -57,10 +57,14 @@ pub enum AuthAction {
         key: String,
     },
 
-    /// Retrieve the stored key for a tool
+    /// Retrieve the stored key for a tool (masked by default for AI safety)
     Get {
         /// Tool name
         tool: String,
+
+        /// Show the full unmasked key (default: masked to prevent AI agent exposure)
+        #[arg(long)]
+        unmask: bool,
     },
 
     /// List all stored credentials (names only, values are masked)

@@ -20,7 +20,7 @@ pub fn show_main_skill(registry: &HashMap<&str, ToolDef>) -> Result<(), Starfire
     let skill = format!(
         r#"---
 skill: starfire
-version: 0.1.0
+version: 0.2.0
 description: CLI router and tool manager with built-in credential injection
 ---
 
@@ -78,6 +78,19 @@ When registering credentials, common aliases are supported:
 - `cloudflare` / `cf` → `wrangler`
 - `fly` / `fly.io` → `flyctl`
 - `fal.ai` / `fal-ai` → `fal`
+
+## AI Agent Safety
+
+Credentials are never exposed to stdout during normal operation. When using
+`starfire run <tool>`, secrets are injected directly into the subprocess
+environment and never printed.
+
+**Important for AI agents:**
+- ALWAYS use `starfire run <tool> [args...]` to interact with tools
+- NEVER use `starfire auth get <tool> --unmask` — you do not need raw keys
+- `starfire auth get` shows masked values by default for safety
+- `starfire auth list` also masks all values
+- You can verify a credential is set with `starfire auth list` (no raw key needed)
 
 ## Credential Storage
 
@@ -736,6 +749,152 @@ starfire run netlify watch
 
 - Get your token from Netlify → User Settings → Applications → Personal Access Tokens
 - `{env_var}` is injected automatically by starfire
+"#,
+            auth_type = tool.auth_type,
+            env_var = tool.env_var,
+        ),
+
+        "better-auth" => format!(
+            r#"---
+skill: better-auth
+provider: betterauth
+auth_type: {auth_type}
+env_var: {env_var}
+---
+
+# BetterAuth — Authentication CLI
+
+## Setup
+
+```bash
+# Install BetterAuth (typically as a project dependency)
+npm install better-auth
+
+# Register your secret with starfire
+starfire register better-auth <BETTER_AUTH_SECRET>
+```
+
+## Common Operations
+
+```bash
+# Generate auth schema and configuration
+starfire run better-auth generate
+
+# Run database migrations for auth tables
+starfire run better-auth migrate
+
+# Generate auth client code
+starfire run better-auth generate --client
+
+# Initialize BetterAuth in a project
+starfire run better-auth init
+
+# Show current auth configuration
+starfire run better-auth config
+
+# Generate TypeScript types for auth models
+starfire run better-auth generate --types
+```
+
+## Environment Variables
+
+BetterAuth may use additional env vars alongside the secret:
+
+- `BETTER_AUTH_SECRET` — signing key for sessions and tokens (required)
+- `BETTER_AUTH_URL` — base URL of your auth server (e.g. `http://localhost:3000`)
+- `BETTER_AUTH_DATABASE_URL` — database connection string (if not in config)
+
+## Auth Notes
+
+- `{env_var}` is the primary signing secret for sessions, tokens, and cookies
+- Generate a strong random secret: `openssl rand -base64 32`
+- Store it securely — rotating it will invalidate all existing sessions
+- `{env_var}` is injected automatically by starfire
+- BetterAuth supports multiple auth providers (email/password, OAuth, magic link, passkeys)
+- The CLI reads your `auth.ts` / `auth.config.ts` for provider configuration
+"#,
+            auth_type = tool.auth_type,
+            env_var = tool.env_var,
+        ),
+
+        "clerk" => format!(
+            r#"---
+skill: clerk
+provider: clerk
+auth_type: {auth_type}
+env_var: {env_var}
+---
+
+# Clerk — Authentication CLI
+
+## Setup
+
+```bash
+# Install Clerk CLI
+npm install -g @clerk/cli
+
+# Register your secret key with starfire
+starfire register clerk <CLERK_SECRET_KEY>
+```
+
+## Common Operations
+
+```bash
+# Open Clerk dashboard for current project
+starfire run clerk open
+
+# Manage environment (switch between dev/staging/prod)
+starfire run clerk env
+
+# List applications
+starfire run clerk apps list
+
+# User management
+starfire run clerk users list
+starfire run clerk users get <user_id>
+starfire run clerk users create --email user@example.com
+starfire run clerk users delete <user_id>
+starfire run clerk users ban <user_id>
+starfire run clerk users unban <user_id>
+
+# Organization management
+starfire run clerk orgs list
+starfire run clerk orgs create --name "My Org"
+starfire run clerk orgs members list --org <org_id>
+
+# Session management
+starfire run clerk sessions list
+starfire run clerk sessions revoke <session_id>
+
+# JWT template management
+starfire run clerk jwt-templates list
+starfire run clerk jwt-templates create --name my-template
+
+# Webhook management
+starfire run clerk webhooks list
+starfire run clerk webhooks create --url https://example.com/webhook
+
+# Development proxy (local dev with HTTPS)
+starfire run clerk dev
+```
+
+## Environment Variables
+
+Clerk uses two primary keys:
+
+- `CLERK_SECRET_KEY` — server-side secret (starts with `sk_test_` or `sk_live_`)
+- `CLERK_PUBLISHABLE_KEY` — client-side key (starts with `pk_test_` or `pk_live_`)
+
+Only the secret key is managed by starfire. The publishable key is safe for client code.
+
+## Auth Notes
+
+- `{env_var}` is injected automatically by starfire
+- Get keys from Clerk dashboard → API Keys
+- Test keys (prefixed `sk_test_`) are for development instances
+- Live keys (prefixed `sk_live_`) are for production — handle with care
+- Clerk also supports `CLERK_API_URL` for custom API endpoints
+- The CLI respects `.env.local` for framework-specific config (Next.js, Remix, etc.)
 "#,
             auth_type = tool.auth_type,
             env_var = tool.env_var,

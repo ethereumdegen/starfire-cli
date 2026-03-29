@@ -18,11 +18,15 @@ starfire list
 starfire register cloudflare <your-api-token>
 starfire register railway <your-token>
 starfire register neonctl <your-api-key>
+starfire register clerk <your-secret-key>
+starfire register better-auth <your-secret>
 
 # Run tools — credentials are injected automatically
 starfire run wrangler deploy
 starfire run railway up
 starfire run neonctl projects list
+starfire run clerk users list
+starfire run better-auth migrate
 ```
 
 ## Commands
@@ -49,6 +53,8 @@ starfire run neonctl projects list
 | supabase | PAT | `SUPABASE_ACCESS_TOKEN` |
 | netlify | PAT | `NETLIFY_AUTH_TOKEN` |
 | fal | API Key | `FAL_KEY` |
+| better-auth | API Key | `BETTER_AUTH_SECRET` |
+| clerk | API Key | `CLERK_SECRET_KEY` |
 
 ## How It Works
 
@@ -59,6 +65,10 @@ If a tool isn't installed, starfire tells you exactly how to install it. If cred
 ## AI Agent Skills
 
 Run `starfire skill` or `starfire skill <tool>` to get structured markdown skill files that AI agents can consume to understand how to use each tool.
+
+## AI Agent Safety
+
+Credentials are never exposed during normal operation. `starfire run` injects secrets directly into the subprocess environment — they never appear in stdout. `starfire auth get` masks values by default and requires `--unmask` to reveal the full key, preventing accidental credential exposure to AI agents.
 
 ## License
 

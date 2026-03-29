@@ -9,11 +9,21 @@ pub fn set(tool: &str, key: &str) -> Result<(), StarfireError> {
     Ok(())
 }
 
-pub fn get(tool: &str) -> Result<(), StarfireError> {
+pub fn get(tool: &str, unmask: bool) -> Result<(), StarfireError> {
     let creds = load_credentials()?;
     match creds.keys.get(tool) {
         Some(key) => {
-            println!("{key}");
+            if unmask {
+                println!("{key}");
+            } else {
+                let masked = if key.len() > 8 {
+                    format!("{}...{}", &key[..4], &key[key.len() - 4..])
+                } else {
+                    "****".to_string()
+                };
+                println!("{masked}");
+                eprintln!("(credential is masked — use --unmask to reveal)");
+            }
             Ok(())
         }
         None => Err(StarfireError::CredentialNotFound(tool.to_string())),
