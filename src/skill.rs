@@ -196,57 +196,71 @@ starfire run wrangler tail
 
 - Token is scoped via Cloudflare dashboard → API Tokens
 - Env var `{env_var}` is injected automatically by starfire
-- For DNS management, use `flarectl` instead (`starfire skill flarectl`)
+- For DNS management, use `starfire cf-dns` (built-in, no extra install needed)
 - For tunnels, use `cloudflared` instead (`starfire skill cloudflared`)
 "#,
             auth_type = tool.auth_type,
             env_var = tool.env_var,
         ),
 
-        "flarectl" => format!(
+        "cf-dns" => format!(
             r#"---
-skill: flarectl
+skill: cf-dns
 provider: cloudflare
 auth_type: {auth_type}
 env_var: {env_var}
 ---
 
-# flarectl — Cloudflare DNS & Zone Management
+# cf-dns — Cloudflare DNS Management (Built-in)
+
+Built-in to starfire — no external CLI needed. Uses the Cloudflare API via curl.
 
 ## Setup
 
 ```bash
-# Install flarectl (requires Go)
-go install github.com/cloudflare/cloudflare-go/cmd/flarectl@latest
-
-# Register your token with starfire
-starfire register flarectl <CF_API_TOKEN>
+# Register your Cloudflare API token with starfire
+starfire register cf-dns <CF_API_TOKEN>
 ```
+
+No other installation required — just `curl` on your PATH.
 
 ## Common Operations
 
 ```bash
-# List zones
-starfire run flarectl zone list
+# List all zones on your account
+starfire cf-dns zones
 
-# DNS record management
-starfire run flarectl dns list --zone=example.com
-starfire run flarectl dns create --zone=example.com --name=app --type=A --content=1.2.3.4
-starfire run flarectl dns update --zone=example.com --id=<record_id> --content=5.6.7.8
-starfire run flarectl dns delete --zone=example.com --id=<record_id>
+# List DNS records for a zone
+starfire cf-dns list --zone example.com
 
-# Create CNAME record
-starfire run flarectl dns create --zone=example.com --name=www --type=CNAME --content=example.com
+# Filter by record type
+starfire cf-dns list --zone example.com --type A
 
-# Firewall rules
-starfire run flarectl firewall rules list --zone=example.com
+# Create an A record
+starfire cf-dns create --zone example.com --type A --name app --content 1.2.3.4
+
+# Create a CNAME record
+starfire cf-dns create --zone example.com --type CNAME --name www --content example.com
+
+# Create a proxied record (orange cloud)
+starfire cf-dns create --zone example.com --type A --name app --content 1.2.3.4 --proxied true
+
+# Create a TXT record
+starfire cf-dns create --zone example.com --type TXT --name _verify --content "v=verify123"
+
+# Update a record (get the record ID from 'starfire cf-dns list')
+starfire cf-dns update --zone example.com --id <record_id> --content 5.6.7.8
+
+# Delete a record
+starfire cf-dns delete --zone example.com --id <record_id>
 ```
 
 ## Auth Notes
 
-- Uses `{env_var}` — a scoped API token from Cloudflare dashboard
-- Can also use `CF_API_KEY` + `CF_API_EMAIL` for legacy global API key auth
+- Uses `{env_var}` — a scoped API token from Cloudflare dashboard → API Tokens
+- Token needs permissions: Zone:Read and DNS:Edit for the zones you want to manage
 - For Workers/Pages, use `wrangler` instead (`starfire skill wrangler`)
+- For tunnels, use `cloudflared` instead (`starfire skill cloudflared`)
 "#,
             auth_type = tool.auth_type,
             env_var = tool.env_var,
@@ -305,7 +319,7 @@ starfire run cloudflared access tcp --hostname app.example.com --url localhost:5
 - `{env_var}` is used for running pre-configured tunnels (from dashboard)
 - For initial setup, `cloudflared tunnel login` uses browser-based OAuth
 - Tunnel credentials are stored in `~/.cloudflared/` after login
-- For DNS records, use `flarectl` instead (`starfire skill flarectl`)
+- For DNS records, use `starfire cf-dns` (built-in, no extra install needed)
 "#,
             auth_type = tool.auth_type,
             env_var = tool.env_var,

@@ -54,11 +54,11 @@ pub fn default_registry() -> HashMap<&'static str, ToolDef> {
         auth_label: "Cloudflare API Token",
     });
 
-    m.insert("flarectl", ToolDef {
-        name: "flarectl",
-        description: "Cloudflare DNS & zone mgmt",
-        install_cmd: "go install github.com/cloudflare/cloudflare-go/cmd/flarectl@latest",
-        binary_name: "flarectl",
+    m.insert("cf-dns", ToolDef {
+        name: "cf-dns",
+        description: "Cloudflare DNS (built-in)",
+        install_cmd: "Built-in — no install needed (uses curl)",
+        binary_name: "curl",
         env_var: "CF_API_TOKEN",
         auth_type: AuthType::ApiToken,
         auth_label: "Cloudflare API Token",

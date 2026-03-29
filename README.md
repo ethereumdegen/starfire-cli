@@ -42,7 +42,7 @@ starfire run better-auth migrate
 | Tool | Auth Type | Env Var |
 |---|---|---|
 | wrangler | API Token | `CLOUDFLARE_API_TOKEN` |
-| flarectl | API Token | `CF_API_TOKEN` |
+| cf-dns | API Token | `CF_API_TOKEN` |
 | cloudflared | API Token | `TUNNEL_TOKEN` |
 | railway | PAT | `RAILWAY_TOKEN` |
 | neonctl | API Key | `NEON_API_KEY` |

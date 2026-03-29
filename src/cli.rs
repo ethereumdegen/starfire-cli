@@ -45,6 +45,99 @@ pub enum Commands {
         #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
         args: Vec<String>,
     },
+
+    /// Cloudflare DNS management (built-in, uses Cloudflare API via curl)
+    #[command(name = "cf-dns")]
+    CfDns {
+        #[command(subcommand)]
+        action: CfDnsAction,
+    },
+}
+
+#[derive(Subcommand)]
+pub enum CfDnsAction {
+    /// List all zones on your Cloudflare account
+    Zones,
+
+    /// List DNS records for a zone
+    List {
+        /// Domain name (e.g. example.com)
+        #[arg(long)]
+        zone: String,
+
+        /// Filter by record type (A, AAAA, CNAME, MX, TXT, etc.)
+        #[arg(long = "type")]
+        record_type: Option<String>,
+    },
+
+    /// Create a DNS record
+    Create {
+        /// Domain name (e.g. example.com)
+        #[arg(long)]
+        zone: String,
+
+        /// Record type (A, AAAA, CNAME, MX, TXT, etc.)
+        #[arg(long = "type")]
+        record_type: String,
+
+        /// Record name (e.g. app, www, @)
+        #[arg(long)]
+        name: String,
+
+        /// Record content (e.g. IP address, target domain)
+        #[arg(long)]
+        content: String,
+
+        /// TTL in seconds (1 = automatic)
+        #[arg(long)]
+        ttl: Option<u32>,
+
+        /// Enable Cloudflare proxy (orange cloud)
+        #[arg(long)]
+        proxied: Option<bool>,
+    },
+
+    /// Update a DNS record by ID
+    Update {
+        /// Domain name (e.g. example.com)
+        #[arg(long)]
+        zone: String,
+
+        /// DNS record ID to update
+        #[arg(long)]
+        id: String,
+
+        /// Record type
+        #[arg(long = "type")]
+        record_type: Option<String>,
+
+        /// Record name
+        #[arg(long)]
+        name: Option<String>,
+
+        /// Record content
+        #[arg(long)]
+        content: Option<String>,
+
+        /// TTL in seconds (1 = automatic)
+        #[arg(long)]
+        ttl: Option<u32>,
+
+        /// Enable Cloudflare proxy (orange cloud)
+        #[arg(long)]
+        proxied: Option<bool>,
+    },
+
+    /// Delete a DNS record by ID
+    Delete {
+        /// Domain name (e.g. example.com)
+        #[arg(long)]
+        zone: String,
+
+        /// DNS record ID to delete
+        #[arg(long)]
+        id: String,
+    },
 }
 
 #[derive(Subcommand)]
