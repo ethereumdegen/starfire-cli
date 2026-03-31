@@ -144,5 +144,15 @@ pub fn default_registry() -> HashMap<&'static str, ToolDef> {
         auth_label: "BetterAuth Secret Key",
     });
 
+    m.insert("pipestreamr", ToolDef {
+        name: "pipestreamr",
+        description: "PipeStreamr unified events CLI",
+        install_cmd: "cargo install pipestreamr",
+        binary_name: "pipestreamr",
+        env_var: "PIPESTREAMR_API_KEY",
+        auth_type: AuthType::ApiKey,
+        auth_label: "PipeStreamr API Key",
+    });
+
     m
 }

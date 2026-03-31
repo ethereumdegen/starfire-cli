@@ -41,6 +41,7 @@ fn run() -> Result<(), errors::StarfireError> {
                 "fal.ai" | "fal-ai" => "fal",
                 "neon" | "neondb" => "neonctl",
                 "betterauth" | "better_auth" => "better-auth",
+                "pipestream" | "pipe-streamr" => "pipestreamr",
                 other => other,
             };
             auth::set(resolved, &token)?;

@@ -745,6 +745,86 @@ BetterAuth may use additional env vars alongside the secret:
             env_var = tool.env_var,
         ),
 
+        "pipestreamr" => format!(
+            r#"---
+skill: pipestreamr
+provider: pipestreamr
+auth_type: {auth_type}
+env_var: {env_var}
+---
+
+# pipestreamr — PipeStreamr Unified Events CLI
+
+## Setup
+
+```bash
+# Install pipestreamr CLI (requires Rust toolchain)
+cargo install pipestreamr
+
+# Register your API key with starfire
+starfire register pipestreamr <PIPESTREAMR_API_KEY>
+```
+
+## Common Operations
+
+```bash
+# List recent events (messages + logs)
+starfire run pipestreamr events --limit 10
+
+# Filter by platform (discord, telegram, gmail, github, etc.)
+starfire run pipestreamr events --platform discord
+
+# Filter by event type
+starfire run pipestreamr events --type message
+starfire run pipestreamr events --type log
+
+# Filter logs by service name
+starfire run pipestreamr events --service railway
+starfire run pipestreamr events --service my-app
+
+# Filter logs by severity (OTLP severity number)
+starfire run pipestreamr events --type log --severity 9
+
+# Filter by sender
+starfire run pipestreamr events --from user123
+
+# Full-text search across body, subject, from_name
+starfire run pipestreamr events --search "deploy failed"
+
+# Time-range queries (RFC 3339)
+starfire run pipestreamr events --since 2026-03-29T00:00:00Z
+starfire run pipestreamr events --since 2026-03-29T00:00:00Z --until 2026-03-30T00:00:00Z
+
+# Get a single event by UUID
+starfire run pipestreamr event <uuid>
+
+# View stats (total, today, by platform)
+starfire run pipestreamr stats
+
+# Health check
+starfire run pipestreamr health
+```
+
+## Custom API URL
+
+By default the CLI talks to `https://api.pipestreamr.com`. To use a different
+server, set `PIPESTREAMR_URL` or pass `--url`:
+
+```bash
+starfire run pipestreamr --url http://localhost:3000 events
+```
+
+## Auth Notes
+
+- Get your API key from the PipeStreamr dashboard → API Keys
+- Keys are prefixed `ps_live_`
+- `{env_var}` is injected automatically by starfire
+- Keys are scoped to a project and support fine-grained scopes (events:read, logs:write, etc.)
+"#,
+            auth_type = tool.auth_type,
+            env_var = tool.env_var,
+        ),
+
         // Fallback for any tool not yet documented
         _ => format!(
             r#"---
