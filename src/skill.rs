@@ -768,8 +768,14 @@ starfire register pipestreamr <PIPESTREAMR_API_KEY>
 ## Common Operations
 
 ```bash
-# List recent events (messages + logs)
+# List your projects
+starfire run pipestreamr projects
+
+# List recent events (messages + logs) across all projects
 starfire run pipestreamr events --limit 10
+
+# Filter to a specific project
+starfire run pipestreamr events --project <project-uuid>
 
 # Filter by platform (discord, telegram, gmail, github, etc.)
 starfire run pipestreamr events --platform discord
@@ -800,9 +806,29 @@ starfire run pipestreamr event <uuid>
 
 # View stats (total, today, by platform)
 starfire run pipestreamr stats
+starfire run pipestreamr stats --project <project-uuid>
 
 # Health check
 starfire run pipestreamr health
+```
+
+## Pagination
+
+```bash
+# Single page (default 25 results)
+starfire run pipestreamr events --limit 50
+
+# Use cursor from previous response for next page
+starfire run pipestreamr events --cursor "2026-03-29T10:00:00Z|550e8400-..."
+
+# Auto-paginate to fetch all matching events (up to 1000)
+starfire run pipestreamr events --all
+
+# Auto-paginate with a custom max
+starfire run pipestreamr events --all --max-events 500
+
+# Combine with filters
+starfire run pipestreamr events --all --platform discord --since 2026-03-29T00:00:00Z
 ```
 
 ## Custom API URL
@@ -819,7 +845,7 @@ starfire run pipestreamr --url http://localhost:3000 events
 - Get your API key from the PipeStreamr dashboard → API Keys
 - Keys are prefixed `ps_live_`
 - `{env_var}` is injected automatically by starfire
-- Keys are scoped to a project and support fine-grained scopes (events:read, logs:write, etc.)
+- Keys are user-scoped (work across all your projects) and support fine-grained scopes (events:read, logs:write, projects:read, etc.)
 "#,
             auth_type = tool.auth_type,
             env_var = tool.env_var,
