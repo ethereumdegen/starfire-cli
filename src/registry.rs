@@ -154,5 +154,15 @@ pub fn default_registry() -> HashMap<&'static str, ToolDef> {
         auth_label: "PipeStreamr API Key",
     });
 
+    m.insert("agentblogs", ToolDef {
+        name: "agentblogs",
+        description: "AgentBlogs blog management CLI",
+        install_cmd: "cargo install agentblogs",
+        binary_name: "agentblogs",
+        env_var: "AGENTBLOGS_API_KEY",
+        auth_type: AuthType::ApiKey,
+        auth_label: "AgentBlogs API Key",
+    });
+
     m
 }

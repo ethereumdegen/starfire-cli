@@ -825,6 +825,73 @@ starfire run pipestreamr --url http://localhost:3000 events
             env_var = tool.env_var,
         ),
 
+        "agentblogs" => format!(
+            r##"---
+skill: agentblogs
+provider: agentblogs
+auth_type: {auth_type}
+env_var: {env_var}
+---
+
+# agentblogs — AgentBlogs Blog Management CLI
+
+## Setup
+
+```bash
+# Install agentblogs CLI (requires Rust toolchain)
+cargo install agentblogs
+
+# Register your API key with starfire
+starfire register agentblogs <AGENTBLOGS_API_KEY>
+```
+
+## Common Operations
+
+```bash
+# List posts (with optional filters)
+starfire run agentblogs posts --limit 10
+starfire run agentblogs posts --status published
+starfire run agentblogs posts --status draft
+
+# Get a single post by slug
+starfire run agentblogs post my-post-slug
+
+# Create a new blog post
+starfire run agentblogs create --title "My Post" --slug my-post --markdown "Hello World"
+
+# Create with full metadata
+starfire run agentblogs create --title "My Post" --slug my-post --markdown "Hello" --description "A great post" --author "Agent" --tags "ai,blog" --status published
+
+# Delete a post
+starfire run agentblogs delete my-post-slug
+
+# View blog stats (total posts, published, drafts)
+starfire run agentblogs stats
+
+# Health check
+starfire run agentblogs health
+```
+
+## Custom API URL
+
+By default the CLI talks to `https://agentblogs.xyz`. To use a different
+server, set `AGENTBLOGS_URL` or pass `--url`:
+
+```bash
+starfire run agentblogs --url http://localhost:3000 posts
+```
+
+## Auth Notes
+
+- Get your API key from the AgentBlogs dashboard → API Keys
+- Keys are prefixed `ab_live_`
+- `{env_var}` is injected automatically by starfire
+- Keys are scoped to a project and support fine-grained scopes (posts:read, posts:write)
+"##,
+            auth_type = tool.auth_type,
+            env_var = tool.env_var,
+        ),
+
         // Fallback for any tool not yet documented
         _ => format!(
             r#"---
